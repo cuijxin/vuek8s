@@ -11,4 +11,20 @@ axios.interceptors.response.use(success => {
         Message.success({message: success.data.msg})
     }
     return success.data;
+}, error => {
+    if (error.response.status == 504 || error.response.status == 404) {
+        Message.error({message: '服务器被吃了( ╯□╰ )'})
+    } else if (error.response.status == 403) {
+        Message.error({message: '权限不足，请联系管理员'})
+    } else if (error.response.status == 401) {
+        message.error({message: '尚未登录，请先登录'})
+        router.replace('/');
+    } else {
+        if (error.response.data.msg) {
+            Message.error({message: error.response.data.msg})
+        } else {
+            Message.error({message: '未知错误！'})
+        }
+    }
+    return;
 })
